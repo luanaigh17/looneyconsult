@@ -54,113 +54,137 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-                      <p>Lab Introduction
+                        <h2> Lab Introduction</h2>
+                        <p> This is a basic virtual lab that utilizes Oracle VM Virtual Box and very little ram so unlike most virtual labs, it can be run off a laptop that only has 8GB of ram</p>
+                        <h3>Lab Components:</h3>
+                        <ul>
+                            <li>1 machine running Windows Server 2019 with 2GB of RAM</li>
+                            <li>1 machine running Windows 10 with 2GB of RAM</li>
+                        </ul>
+                    
+                        <h2>Lab Setup:</h2>
+                        <ol>
+                            <li>
+                                <h3>Download Required Files:</h3>
+                                <ul>
+                                    <li>Update or download Oracle VM from <a href="https://www.virtualbox.org/wiki/Downloads">here</a>. (make sure to not have any peripherals plugged in as it may throw an error code)</li>
+                                    <li>Download the extension packet.</li>
+                                    <li>Download Windows 10 ISO from <a href="https://www.microsoft.com/en-us/software-download/windows10">Microsoft's website here</a>.</li>
+                                    <li>Download Windows Server 2019 ISO from <a href="https://www.microsoft.com/en-us/evalcenter/download-windows-server-2019">Microsoft's website here</a>(may have to fill out 'company' information or not).</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>Lab Setup:</h3>
+                                <ul>
+                                    <li>Set up Windows Server:</li>
+                                    <li>Open Oracle VirtualBox, create a new machine.</li>
+                                    <li>Configure settings (name, ISO image, memory allocation).</li>
+                                    <li>Start the machine, choose desktop edition, and complete installation.</li>
+                                    <li>Configure network settings.
+                                        <ul>
+                                            <li>Address: 172.16.0.1</li>
+                                            <li>Subnet Mask: 255.255.255.0</li>
+                                            <li>Default gateway - blank</li>
+                                            <li>Then make sure to click “Use the follow DNS server address”</li>
+                                            <li>Preferred DNS Server: 127.0.0.1</li>
+                                        </ul>
+                                    </li>
+                                    <li>Navigate to the server manager and click "Add Features and Roles"</li>
+                                    <li>Download and install Active Directory.</li>
+                                    <li>After install is complete, you'll find a notification in the server, click this to complete domain controller promotion.</li>
+                                    <li>Click add a new forest and set up domain name with a password</li>
+                                    <li>Set up domain admin.</li>
+                                    <li>Navigate to “Active Directory Users and Computers”.</li>
+                                    <li>Navigate to the “mydomain.com” tab.</li>
+                                    <li>Right-click and create a new organizational unit called “Admins”.</li>
+                                    <li>Right-click on this group and add a new user.</li>
+                                    <li>After you name it and finish making the user, right-click on the user account and select properties.</li>
+                                    <li>Use the “Member of” tab to add the user to the “domain admins” group.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>RAS/Nat Setup:</h3>
+                                <ul>
+                                    <li>Navigate to “Add roles and features”.</li>
+                                    <li>Choose domain and then  “Remote Access” on the “Server Roles’ tab.</li>
+                                    <li>On the Remote Access tab, make sure to check the box beside “routing”; another box will automatically check as well.</li>
+                                    <li>Install the role (finish the wizard).</li>
+                                    <li>After the role is done installing, go to tools tab on the server manager and click “Routing and Remote access”.</li>
+                                    <li>Right-click on “DC (local)” and click the configuration option.</li>
+                                    <li>Go through the wizard, for the first option select “Network Address Translator”.</li>
+                                    <li>The next window will have you select a public interface to connect to the internet; this is why we renamed the networks earlier.</li>
+                                    <li>Make sure to choose the one that connects to the internet and not the internal network.</li>
+                                    <li>Select next and then finish.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>DHCP Setup:</h3>
+                                <ul>
+                                    <li>Add DHCP Server role.</li>
+                                    <li>Select DHCP from Tools tab in upper right of server manager</li>
+                                    <li>Right click on the IPV4 in the domain tab</li>
+                                    <li>Set up scope for IP addresses. (I used a scope of 172.16.0.100-.200)</li>
+                                    <li>Select yes configure DHCP options.</li>
+                                    <li> For the Default Gateway I used 172.16.0.1, make sure to click "Add"</li>
+                                    <li> Finish install wizard making sure to ativate the scope</li>
+                                    <li> Right click DHCP tab and click authorize</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>Creating Users:</h3>
+                                <ul>
+                                    <li>Disable IE Enhanced Security Configuration.</li>
+                                    <li>Download and extract <a href="https://github.com/joshmadakor1/AD_PS/archive/refs/heads/master.zip"> Powershell Script here</a> for zip file set up to create users</li>
+                                    <li>Add your name to the name.txt file so you know one of the logins</li>
+                                    <li>Open Powershell as an Administrator.</li>
+                                    <li> In the top left, click the folder button labeled "Open Script" and find the "CREATE USERS" folder in the zip file</li>
+                                    <li> Change execution policty using command line in powershell ( Set-ExectionPolicy Unrestricted )</li>
+                                    <li>Make sure you're terminal is in the right directory/folder to run the script properly ( C:\users\ *CURRENT USER*\desktop\AD_PS-masters> )</li>
+                                    <li>Run PowerShell script (by pressing the play button at the top of window) to create users.</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>Client Machine Setup:</h3>
+                                <ul>
+                                    
+                                    <li>Go to the Oracle VM Manager and add a new VM.</li>
+    <li>Set up machine name and allocate memory.</li>
+    <li>In advanced settings, navigate to the network tab and change the “Attached to” selection, to “Internal Network” to connect to the NAT set up earlier for the Domain Controller.</li>
+    <li>Start up the new Windows 10 Machine and go through the install wizard.</li>
+    <li>Don’t worry about the product key; select you don’t have one.</li>
+    <li>Choose the Pro edition for the OS because the Home edition can’t connect to the domain.</li>
+    <li>Hit custom install to ensure it formats the virtual hard drive.</li>
+    <li>Finish going through the installer, and it should restart and then start the configuration.</li>
+    <li>Go through configuration like normal; on the network page select “I don’t have internet”.</li>
+    <li>Set up for home use or “limited” setup to avoid Microsoft online account.</li>
+    <li>Set up a basic user account; you can give this one no password if not in use.</li>
+    <li>Finish configuration and reach the home page.</li>
+    <li>After configuration setup, rename the virtual PC and connect it to the domain.</li>
+    <li>Right-click the start menu and click settings.</li>
+    <li>Scroll down to “Rename this PC (advanced)” and click change.</li>
+    <li>Rename the computer to your preference (e.g., Client1) and select the Domain option.</li>
+    <li>Enter the name of your domain (Ex. Mydomain.com).</li>
+    <li>It will ask for the name and password of an account with permission to join the domain.</li>
+    <li>Use the Admin account created earlier or a regular user account.</li>
+    <li>Restart the machine now.</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    
+                        <h2>Conclusion:</h2>
+                            <p>Now, the system will prompt you to restart immediately or defer it for later. It's recommended to restart now for seamless continuation. 
+                                While the system is rebooting, navigate back to the DHCP tool menu and select the Scope tab. Here, you'll observe that an IP address is
+                                 being leased. Once the client machine finishes restarting, you'll gain access to log in using any of the 1000 user accounts previously 
+                                 created. Congratulations! You've now established the fundamentals of a Windows Server with Active Directory (AD), providing a solid foundation 
+                                 for experimentation and exploration. As you familiarize yourself with the lab setup, you'll discover various features and roles that can be 
+                                 implemented in your own systems.</p>
 
-                        This is a basic virtual homelab that uses Oracle VM Virtual Box. It’s a small lab that doesn’t require much RAM so as long as you have 8Gb of RAM, you shouldn’t encounter any problems running this lab as it only consist of</p>
-                        
-                       <p> 1 machine running Windows server 2019 using 2GB of RAM </p>
-                        
-                       <p>1 machine running Windows 10 using 2GB of RAM</p>
-                        
-                        <p>Down below is a write up of the process for setting up this lab, at the end of the article I will share the link to the original video I used.</p>
-                        
-                         
-                        
-                        <p>Lab Setup – Download needed files.</p>
-                        First thing to do is to either download or update Oracle VM.
-                        
-                        https://www.virtualbox.org/wiki/Downloads
-                        
-                        This link will take you to the downloads page. Download the correct version for you host operating system. While downloading and/or performing an update, make sure to not have any peripherals plugged in (headphones, webcam, ext. usb) as it may cause the installer to throw an error. For example, I had headphones plugged in and it threw the error 4672 which refers to another program running that may interfere with Oracle installer.
-                        
-                        After downloading/updating your Oracle VM, download the extension packet that’s also located on the downloads link provided above.  This is just a packet that enhances Oracle’s capabilities.
-                        
-                        Once you have the VMware downloaded, you can download the Windows 10 iso file. This is the file we’ll use to make an instance of Windows 10 on your Virtual Box. Originally I was directed to a link that was originally used to just download the ISO file from the site, however now you have to download the media creation tool from this link. Don’t let the link fool you, when you click the “Download Now” button, you won’t be downloading the ISO, you’ll be downloading the Windows Media Creation Tool.
-                        
-                        https://www.microsoft.com/en-us/software-download/windows10
-                        
-                        After it downloads, go ahead and start up the creation tool. Don’t skip through too quickly because your first option is to pick either an update media or an install media, here of course you want to select the install media. There’s nothing to really deviate from on the default options other than choosing the ISO file type when the option comes up. Suggested to use the windows64 bit architecture. This may take some time so be prepared.
-                        
-                        Next download will be the Windows 2019 server ISO. Using the link below, you’ll get options for a ISO, VHD or Azure file, make sure to choose the ISO file. This file is 5gv so it may take some time depending on your connection.
-                        
-                        https://www.microsoft.com/en-us/evalcenter/download-windows-server-2019
-                        
-                        <p>Lab Set Up</p>
-                        
-                       <p> After downloading all the needed files, I set up the Windows Server first.  Open your Oracle Virtual Box program and select “New” to start a new machine. Change the name (changed the name to Domain Controller) select the ISO file you downloaded earlier for the ISO image, allocate memory (I would suggest at least 20Gb for the virtual hard drive, and 2Gb of RAM, more RAM if you have it, but I didn’t). After getting that set up, press Enter on your keyboard to finish the VM set up. Once done, click on the setting and go to the advanced settings portion. Here you’ll go to the network tab and add another NAT, this one you’ll want to set to your internal network.
-                        
-                        Now start up the machine! For the Edition option, choose one of the “Desktop” editions or else you won’t have a GUI to use, just a command line. After this you just go through a basic installation. Hit custom install to make sure it formats the virtual hard drive. Once at the password screen, don’t get stuck, Oracle has a toolbox at the top of the machine that allows you to input certain keyboard combination like “ctrl+alt+del” or use the host button combination it has for your system. 
-                        
-                        Now on your Windows Server machine, navigate to the network. Here you’ll click on change adapter options.  Here you’ll see your two NATs. This is where you have to figure out which one is your home network connected to the internet and which one is the internal NAT you set up earlier. This is easy if you right click on the network and then click on the status, you can view your IP address. One should have a normal IP address but the other will have a “169.xxx.xx.xxx” APIPA address, the one with the APIPA address is the internal network NAT. Rename these for easier set up later.
-                        
-                        Next thing to do is set up the IP address on your Internal NAT, so right click on the internal NAT again and navigate to the properties, click on the “Internet Protocol Version 4” option and then select the “Use the following IP address option”, here you’ll fill it in as follows:
-                       </p>
-                        <p> Address: 172.16.0.1</p>
-                        
-                        <p>Subnet Mask: 255.255.255.0  </p>
-                        
-                        <p>Default gateway-blank</p>
-                        
-                        <p>Then make sure to click “Use the follow DNS server address”</p>
-                        
-                        <p>Preferred DNS Server: 127.0.0.1</p>
-                        
-                        Now we’re going to download Active Directory. Go to the server manager dashboard on the windows server and click “Add roles and features”, click next, next and you should only have one server on the Server Selection tab, so select it and hit next. On Server Roles tab, chose “Active Directory Domain Services”, then select the next options and hit install, again this may take some time. After that’s done, you’ll notice in the top right of the server manager, there’s a notification flag with a notification wanting you to complete the promotion of the server to a domain controller, click this to complete the promotion.
-                        
-                        On the wizard that pops up, select “Add a new forest” and rename it something like “mydomain.com” (video advised to use this forest name as it may be hard coded into the powershell script we’ll use later), add an easy password and just go through the wizard  clicking next and then install it. The machine will want to restart.
-                        
-                        After it restarts, you’ll want to set up a domain admin. To do this, click the start icon and go to “Active Directory Users and Computers”, navigate to the “mydomain.com” tab. Right click on it first, and create a new organizational unit called “Admins”. Now right click on this group and add a new user, after you name it and finish making the user, right click on the user account and select properties. Use the “Member of” tab to add the user to the “domain admins” group. Now you can log in using this account instead of the base admin account.
-                        
-                        RAS/Nat
-                        
-                        Next we will be adding another role to the server, So following the same steps, go to the server manager and click on “Add roles and features” choose your domain and then choose “Remote Access” on the “Server Roles’ tab, on the Remote Access tab make sure to check the box beside “routing”, another box will automatically check as well, then install  the role (finish the wizard).
-                        
-                        After the role is done installing,, go the tools tab on the server manager and hit “Routing and Remote access”, right click on “DC (local)” and click the configuration option, go through the wizard, for the first option select “Network Address Translator”, the next window will have you select a public interface to connect to the internet, this is why we renamed the networks earlier, make sure to choose the one that connects to the internet and not the internal network, select next and then finish.
-                        
-                        DHCP
-                        
-                        Now we will set up DHCP so the client computer will be able to connect to the internet using the bridged connection to the server. So, go back to the Server Manager and add another role. Select your domain, select DHCP Server on the “Server Roles’ tab and then just go through the wizard and install the feature/role.
-                        
-                        Now once it’s done, go to tools and select DHCP so we can set up the scope for the IP addresses. Click on the mydomain tab in the DCHP tool, then right click on the IPV4 and give it a new scope. You can name the scope after the range if you’d like.
-                        
-                        For now I’ve set up the start Ip address as, 172.16.0.100 and the end Ip address as 172.16.0.200,
-                        
-                        Set the length to 24 for the subnet mask, or 255.255.255.0, ignore the exclusion, for IP lease duration it doesn’t really matter for this lab, but you can set it up for a few days. For configuring DHCP options, select “Yes,” because we want to set up which servers to use for DNS and the gateway. For the Default Gateway address I used 172.16.0.1, make sure to hit “Add”. Go through install wizard, make sure the Domain name and DNS Servers tab has your domain selected (it should already), ignore win server, select “Yes I want to active the scope”. Finish the wizard and you may have to right click on the DHCP tab on the left side and click “Authorize” and then right click again and hit “Refresh” and you should then see your scope pop up.
-                        
-                        Users
-                        
-                        <p>The next thing we’re going to do is add some users, but first, go to the server manager and click on “Configure this local server”, then disable “IE Enhanced Security Configuration”, this will allow us to browse the internet from the Domain controller, apparently you wouldn’t usually do this in a production environment. After that you can then use this link to download the Powershell script used to make a 1000 users (seems a bit much right? Haha)
-                        
-                        https://github.com/joshmadakor1/AD_PS/archive/refs/heads/master.zip                                                                                                                                       
-                        
-                        Extract the scrip somewhere you can find it. Open the file and open the names.txt file and add your name for easier use later and save it. Now open Powershell as an administrator, in the top left click the folder button labeled “Open Script” and select the “CREATE-USERS”  folder that was in the zip file. Before you can actually run the script, since you downloaded this form an “unknown source”, you have to change the execution policy, so in the Powershell command line, type
-                        
-                        Set-ExectionPolicy Unrestricted</p>
-                        
-                        Now you should be able to run the script, take note of the password provided in the script or change it to the one you’re already using. This script runs through the names.txt file and creates a user account for every name listed in there using their first initial and last name (ex. John Loon would be jloon). One more thing is to make sure you’re in the right folder before you run the script, in your powershell command line you want to make sure you’re in the correct directory, depending on where you extract the file, you should move into a directory similar to this:
-                        
-                        C:\users\ *CURRENT USER*\desktop\AD_PS-masters>
-                        
-                        Navigating to the top of the Powershell, you would then click the “Play” button which looks like  start icon, then it’ll ask if you want to run and of course we want to. While the script is running, you may notice someone loaded a “trolling” account into the script to mess with people, but if you see nothing else, don’t worry about it. Let that finish and then we can minimize the machine (not shut down).
-                        
-                       <p> Client Machine </p>
-                        
-                        Setting up the Windows 10 machine is a lot simpler. Go back to the Oracle VM Manager and add a new VM. Name the machine something like Clients and select your windows 10 ISO from earlier. Again, depending on how much you have, you can delegate more RAM to your system but I only used 2GB of RAM, 2 processors and 20GB of memory. On the advanced settings, navigate to the network tab and changed the “Attached to” selection to “Internal Network” to make sure we connect to our NAT we made earlier for the Domain Controller.
-                        
-                        Start up the new Windows 10 Machine and go through the install wizard. Don’t worry about the product key, just select you don’t have one. Make sure to choose Pro edition for which OS you want to install because the Home edition can’t connect to the domain. Hit custom install to make sure it formats the virtual hard drive. Finish going through the installer and it should restart and then start the configuration. Go through configuration like normal; on the network page select “I don’t have internet” , then the next bit can change up some but basically you want to set it up for home use or “limited” set up, or else it will try to make you use a Microsoft online account. After that it will ask you to set up a basic user account, I gave this one no password as I wont be using this account. Go through and finish configuration and you should get to home page.
-                        
-                        After configuration set up, we’re going to rename the virtual pc (inside the pc) and connect it to the domain. To do so, right click the start menu and click settings. Scroll down to “Rename this PC (advanced)”, there will be an option that says “To rename the computer or change the domain or workgroup click change” use this option. Rename the computer to whatever you choose (Client1) and then in the member of section, click the Domain option and enter the name of your domain, (Ex. Mydomain.com), it will ask you to enter the name and password of an account with permission to join the domain. Supposedly, you’re supposed to use the Admin account we created earlier, but a regular user account worked just the same. Now it’ll ask you to restart now or later, go ahead and restart it now.
-                        
-                        While that’s restarting , you can go back to the DHCP tool menu and select your Scope tab. On here you can now see that we having an IP address being leased.
-                        
-                        Once the client is done restarting, you should now be able to log in to it with any of the 1000 user accounts you created earlier.
-                        
-                        Congratulations! You now have the basics of a Windows Server with AD on it to break and experiment with! I plan to post more of what we can actually do with a lab this small, but for now you can play around on  your own and learn about the different features and roles you can implement in your own systems. As promised I’ll also provide a link to the original walk through video below. The goal of this lab was to be able to walk someone through this set up , step by step without being more long winded than it already was and without making another video that would basically be copying the walk-through. Thanks for the support and I look forward to sharing more!
-                        
-                        ...<p> https://www.youtube.com/watch?v=MHsI8hJmggI </p>
-                    </p>
-                        
-                        </p>
+
+                                 <p>I intend to share additional insights on leveraging this compact lab effectively. For now, feel free to explore and experiment independently to gain a deeper understanding of system functionalities. 
+    As promised, below is the link to the original walkthrough video. The objective of this lab was to provide a comprehensive,
+     step-by-step guide without unnecessary verbosity, avoiding the need for additional video content that merely replicates the 
+     walkthrough. As promise <a href="https://www.youtube.com/watch?v=MHsI8hJmggI"> click here</a> for original youtube walkthrough.
+      Thank you for your support, and I'm excited to share more insights in the future!</p>
                     </div>
                 </div>
             </div>
